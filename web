@@ -1,0 +1,291 @@
+import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Search } from 'lucide-react';
+
+const HomePage = ({ onNavigate }) => {
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            <div className="flex items-center">
+              <span className="text-xl font-semibold">EuroPrivacy Hub</span>
+            </div>
+            <div className="flex items-center space-x-8">
+              <button 
+                onClick={() => onNavigate('regulations')}
+                className="text-gray-700 hover:text-green-800 transition-colors"
+              >
+                Regulations
+              </button>
+              <button className="text-gray-700 hover:text-green-800 transition-colors">
+                Compare Laws
+              </button>
+              <button className="text-gray-700 hover:text-green-800 transition-colors">
+                Resources
+              </button>
+              <button className="text-gray-700 hover:text-green-800 transition-colors">
+                Updates
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="bg-gradient-to-b from-green-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <h1 className="text-4xl md:text-5xl font-light text-gray-900 max-w-3xl">
+            Navigate European Data Protection with Confidence
+          </h1>
+          <p className="mt-6 text-xl text-gray-600 max-w-2xl">
+            Comprehensive resources for IT professionals and legal experts on EU data protection regulations and compliance.
+          </p>
+          <div className="mt-8 flex space-x-4">
+            <button
+              onClick={() => onNavigate('regulations')}
+              className="bg-green-800 text-white px-6 py-3 rounded-lg hover:bg-green-900 transition-colors flex items-center"
+            >
+              Search Regulations
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const RegulationsSearch = ({ onNavigate }) => {
+  const [activeFilters, setActiveFilters] = useState({
+    jurisdiction: '',
+    type: [],
+    year: [],
+    searchQuery: ''
+  });
+
+  const jurisdictions = [
+    { id: 'eu', name: 'European Union', icon: '🇪🇺' },
+    { id: 'de', name: 'Germany', icon: '🇩🇪' },
+    { id: 'fr', name: 'France', icon: '🇫🇷' },
+    { id: 'it', name: 'Italy', icon: '🇮🇹' },
+    { id: 'es', name: 'Spain', icon: '🇪🇸' }
+  ];
+
+  // Updated regulations data
+  const regulations = {
+    'European Union': {
+      'Currently Active': [{
+        title: 'General Data Protection Regulation (GDPR)',
+        status: 'Active',
+        inForce: 'May 2018',
+        lastUpdate: 'March 2024',
+        description: 'Core data protection regulation that applies directly across the EU.',
+        replacedLaw: 'Data Protection Directive 95/46/EC',
+        keyPoints: [
+          'Expanded territorial scope',
+          'Enhanced data subject rights',
+          'Privacy by design & default',
+          'Accountability requirements',
+          'Stricter enforcement regime'
+        ]
+      }, {
+        title: 'Law Enforcement Data Protection Directive (LEDP)',
+        status: 'Active',
+        inForce: 'May 2016',
+        lastUpdate: 'May 2016',
+        description: 'Governs data processing by law enforcement authorities.',
+        replacedLaw: 'Framework Decision 2008/977/JHA',
+        keyPoints: [
+          'Criminal investigation purposes',
+          'Balance between privacy & law enforcement',
+          'Cross-border data sharing rules',
+          'DPO requirements for authorities'
+        ]
+      }],
+      'Implementation Period': [{
+        title: 'NIS 2 Directive',
+        status: 'Implementation by Oct 2024',
+        adopted: 'December 2022',
+        description: 'Enhanced cybersecurity framework replacing NIS Directive.',
+        replaces: 'NIS Directive',
+        keyPoints: [
+          'Expanded scope',
+          'Stricter security measures',
+          'Supply chain security',
+          'Enhanced incident reporting'
+        ]
+      }],
+      'Historical': [{
+        title: 'Data Protection Directive 95/46/EC',
+        status: 'Replaced by GDPR',
+        active: '1995 to May 2018',
+        replacedBy: 'GDPR',
+        description: 'Previous EU data protection framework.',
+        keyPoints: [
+          'First comprehensive EU data protection law',
+          'Created Article 29 Working Party',
+          'Required national implementation',
+          'Limited territorial scope'
+        ]
+      }]
+    }
+  };
+
+  const renderRegulationCard = (regulation) => (
+    <div className="bg-white rounded-lg shadow-sm p-6 mb-4">
+      <div className="flex justify-between items-start">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900">{regulation.title}</h3>
+          <div className="mt-2">
+            <p className="text-gray-600">{regulation.description}</p>
+            {regulation.replacedLaw && (
+              <p className="mt-1 text-sm text-gray-500">
+                Replaced: {regulation.replacedLaw}
+              </p>
+            )}
+            {regulation.replacedBy && (
+              <p className="mt-1 text-sm text-gray-500">
+                Replaced by: {regulation.replacedBy}
+              </p>
+            )}
+          </div>
+          <div className="mt-3">
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Key Points:</h4>
+            <ul className="list-disc pl-5 space-y-1">
+              {regulation.keyPoints.map((point, idx) => (
+                <li key={idx} className="text-gray-600">{point}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <span className={`px-3 py-1 rounded-full text-sm ${
+          regulation.status.toLowerCase().includes('active') ? 'bg-green-100 text-green-800' :
+          regulation.status.toLowerCase().includes('implementation') ? 'bg-blue-100 text-blue-800' :
+          regulation.status.toLowerCase().includes('development') ? 'bg-yellow-100 text-yellow-800' :
+          'bg-gray-100 text-gray-800'
+        }`}>
+          {regulation.status}
+        </span>
+      </div>
+      {(regulation.inForce || regulation.active) && (
+        <div className="mt-4 text-sm text-gray-500">
+          {regulation.inForce ? `In force since: ${regulation.inForce}` : `Active period: ${regulation.active}`}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <nav className="flex items-center space-x-4">
+            <button 
+              onClick={() => onNavigate('home')}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              Home
+            </button>
+            <span className="text-gray-300">/</span>
+            <span className="text-gray-900">Search Regulations</span>
+          </nav>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Search Bar */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search regulations..."
+              value={activeFilters.searchQuery}
+              onChange={(e) => setActiveFilters(prev => ({...prev, searchQuery: e.target.value}))}
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Jurisdiction Filter Buttons */}
+          <div className="mt-6">
+            <h3 className="text-sm font-medium text-gray-700 mb-3">Select Jurisdiction</h3>
+            <div className="flex flex-wrap gap-3">
+              {jurisdictions.map((jurisdiction) => (
+                <button
+                  key={jurisdiction.id}
+                  onClick={() => {
+                    setActiveFilters(prev => ({
+                      ...prev,
+                      jurisdiction: prev.jurisdiction === jurisdiction.name ? '' : jurisdiction.name
+                    }));
+                  }}
+                  className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors
+                    ${activeFilters.jurisdiction === jurisdiction.name
+                      ? 'bg-green-800 text-white'
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                >
+                  <span className="mr-2">{jurisdiction.icon}</span>
+                  {jurisdiction.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Regulations List */}
+        {activeFilters.jurisdiction && regulations[activeFilters.jurisdiction] && (
+          Object.entries(regulations[activeFilters.jurisdiction]).map(([category, laws]) => {
+            const filteredLaws = laws.filter(law => 
+              !activeFilters.searchQuery || 
+              law.title.toLowerCase().includes(activeFilters.searchQuery.toLowerCase()) ||
+              law.description.toLowerCase().includes(activeFilters.searchQuery.toLowerCase())
+            );
+
+            if (filteredLaws.length === 0) return null;
+
+            return (
+              <div key={category} className="mb-8">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">{category}</h2>
+                <div className="space-y-4">
+                  {filteredLaws.map((regulation, index) => (
+                    <div key={index}>
+                      {renderRegulationCard(regulation)}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+};
+
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  return (
+    <div className="relative overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentPage}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          {currentPage === 'home' ? (
+            <HomePage onNavigate={setCurrentPage} />
+          ) : (
+            <RegulationsSearch onNavigate={setCurrentPage} />
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default App;
